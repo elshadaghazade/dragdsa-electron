@@ -1,0 +1,88 @@
+{
+  "name": "dragsa-electron",
+  "private": true,
+  "version": "0.1.2",
+  "description": "Electron wrapper for dragsa — bundles Vite UI + the compiled tools backend binary.",
+  "main": "dist/main.js",
+  "scripts": {
+    "clean": "rm -rf dist resources/MCP",
+    "build:electron": "tsc",
+    "build:backend": "node scripts/build-backend.mjs",
+    "build:assets": "node scripts/build-assets.mjs",
+    "build": "npm run clean && npm run build:electron && npm run build:backend && npm run build:assets",
+    "dev:electron": "tsc -w",
+    "predev": "node scripts/strip-quarantine.cjs",
+    "dev": "npm run build:electron && npm run build:backend && cross-env DRAGSA_ELECTRON_DEV=1 electron .",
+    "prestart": "node scripts/strip-quarantine.cjs",
+    "start": "electron .",
+    "postinstall": "node scripts/strip-quarantine.cjs",
+    "dist:prep": "node scripts/ensure-release-published.mjs",
+    "dist:mac": "npm run dist:prep && npm run build && electron-builder --mac --publish always",
+    "dist:mac:arm64": "npm run dist:prep && npm run build && electron-builder --mac --arm64 --publish always",
+    "dist:mac:x64": "npm run dist:prep && npm run build && electron-builder --mac --x64 --publish always",
+    "dist:win": "npm run dist:prep && npm run build && electron-builder --win --publish always",
+    "dist:win:x64": "npm run dist:prep && npm run build && electron-builder --win --x64 --publish always",
+    "dist:linux": "npm run dist:prep && npm run build && electron-builder --linux --publish always"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "build": {
+    "appId": "com.dragsa.app",
+    "productName": "Dragsa",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/MCP",
+        "to": "MCP",
+        "filter": ["**/*"]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.business",
+      "target": [
+        { "target": "dmg", "arch": ["arm64", "x64"] }
+      ],
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Office"
+    },
+    "dmg": {
+      "title": "Dragsa ${version}"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "elshadaghazade",
+      "repo": "dragsa",
+      "releaseType": "release"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!--
+    Dragsa entitlements (macOS).
+
+    hardenedRuntime is OFF in electron-builder (deliberate — no codesign identity,
+    no notarization). These entitlements are therefore not enforced by the
+    kernel; they exist so that flipping hardenedRuntime: true later (if we ever
+    acquire a Developer ID) only requires a config change, not a plist edit.
+
+    The minimum Dragsa needs from a hardened runtime:
+      • com.apple.security.cs.allow-unsigned-executable-memory — V8 JIT
+      • com.apple.security.cs.allow-jit — V8 JIT (paired with the above on
+        recent macOS)
+      • com.apple.security.cs.disable-library-validation — for the bundled
+        PyInstaller MCP binary, which links against system Python framework
+        bits that aren't individually signed
+      • com.apple.security.network.client — Electron fetches the brain over
+        HTTPS, MCP dials the brain WSS endpoint
+      • com.apple.security.files.user-selected.read-write — file save/open
+        dialogs (e.g. report downloads initiated from the renderer)
+
+    Nothing else is required: no app sandbox, no iCloud, no push, no
+    microphone, no camera, no location.
+  -->
+  <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+  <true/>
+  <key>com.apple.security.cs.allow-jit</key>
+  <true/>
+  <key>com.apple.security.cs.disable-library-validation</key>
+  <true/>
+  <key>com.apple.security.network.client</key>
+  <true/>
+  <key>com.apple.security.files.user-selected.read-write</key>
+  <true/>
+</dict>
+</plist>

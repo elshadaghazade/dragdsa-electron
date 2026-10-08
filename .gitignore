@@ -1,0 +1,15 @@
+node_modules/
+dist/
+release/
+resources/backend
+resources/MCP
+*.log
+.DS_Store
+
+# build/ holds electron-builder build resources (e.g. entitlements.mac.plist).
+# gitignored at the top level too; re-allow specific ones we commit.
+!build/
+
+# Local environment (must not leak secrets to the public repo)
+.env
+.env.*
