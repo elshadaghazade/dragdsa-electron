@@ -1,7 +1,7 @@
 {
   "name": "dragsa-electron",
   "private": true,
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Electron wrapper for dragsa — bundles Vite UI + the compiled tools backend binary.",
   "main": "dist/main.js",
   "scripts": {
